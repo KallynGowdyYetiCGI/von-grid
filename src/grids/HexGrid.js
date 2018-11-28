@@ -5,6 +5,7 @@
 	type
 	size - number of cells (in radius); only used if the map is generated
 	cellSize
+	cellHeight
 	cells - a hash so we can have sparse maps
 	numCells
 	extrudeSettings
@@ -24,6 +25,7 @@ vg.HexGrid = function(config) {
 	this.type = vg.HEX;
 	this.size = 5; // only used for generated maps
 	this.cellSize = typeof config.cellSize === 'undefined' ? 10 : config.cellSize;
+	this.cellHeight = typeof config.cellHeight === 'undefined' ? 1 : config.cellHeight;
 	this.cells = {};
 	this.numCells = 0;
 
@@ -172,11 +174,10 @@ vg.HexGrid.prototype = {
 
 	generateTile: function(cell, scale, material) {
 		var height = Math.abs(cell.h);
-		if (height < 1) height = 1;
 
 		var geo = this._geoCache[height];
 		if (!geo) {
-			this.extrudeSettings.amount = height;
+			this.extrudeSettings.depth = height;
 			geo = new THREE.ExtrudeGeometry(this.cellShape, this.extrudeSettings);
 			this._geoCache[height] = geo;
 		}
@@ -210,7 +211,7 @@ vg.HexGrid.prototype = {
 			cellSize: this.cellSize,
 			material: null,
 			extrudeSettings: {
-				amount: 1,
+				depth: 1,
 				bevelEnabled: true,
 				bevelSegments: 1,
 				steps: 1,
@@ -264,7 +265,7 @@ vg.HexGrid.prototype = {
 			for (y = -this.size; y < this.size+1; y++) {
 				z = -x-y;
 				if (Math.abs(x) <= this.size && Math.abs(y) <= this.size && Math.abs(z) <= this.size) {
-					c = new vg.Cell(x, y, z);
+					c = new vg.Cell(x, y, z, this.cellHeight);
 					this.add(c);
 				}
 			}
