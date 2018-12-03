@@ -75,8 +75,9 @@ window.addEventListener('load', function(evt) {
 	// listen to the orbit controls to disable the raycaster while user adjusts the view
 	scene.controls.addEventListener('wheel', onControlWheel);
 
-	var grid = new vg.HexGrid({
-		rings: 5,
+	var grid = new vg.SqrGrid({
+		// rings: 5,
+		size: 5,
 		cellSize: 10
 	});
 	var board = new vg.Board(grid);
